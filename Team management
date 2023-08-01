@@ -1,0 +1,55 @@
+Websites as Apps
+Turn websites into customized desktop apps with Electron
+Published April 2016 and last updated August 2017
+
+Electron is a tool for building cross-platform desktop apps with open web technologies like HTML, CSS, Javascript, and Node.js. Nativefier is a command-line node module built on Electron that "wraps any web page natively without even thinking, across Windows, OSX and Linux".
+This post will walk you through the process of creating an app with Nativefier. Some of the content here is specific to Mac OS X, but it is possible to do all of this on Windows and Linux, too.
+Why?
+I used to leave Gmail open in a browser tab all day. For a while I would pin the tab, but pinning tabs seems symptomatic of a website's need to break out of the browser and have of a life of its own.
+Creating the Dock Icon
+OS X uses a special file format for icons called icns. It's a bit cumbersome to convert images to this format, but luckily a kind soul went to the trouble of abstracting away that work in a convenient little node module called node-icns.
+We'll use curl to download an application icon from the GitHub Octodex, then convert it from PNG to ICNS:
+The first thing to do is install Node.js. If you don't already have it set up, it's pretty easy. Just download it at nodejs.org.
+npm install -g node-icns
+curl -o cat.png https://octodex.github.com/images/adventure-cat.png
+nicns --in cat.png --out cat.icns
+Injecting Custom Scripts and Styles
+Nativefier allows you to inject javascript or css files into the packaged web page. This opens up a lot of possibilities, allowing you to customize any aspect of the appearance and behavior of your app.
+echo "console.log('whoa script injection')" > custom.js
+echo "body { background: papayawhip; }" > custom.css
+
+
+ 
+Internal vs External URLs
+When packaging an app, you can configure whether clicked links should open in the app window itself or in the default web browser. This can be configured using the --internal-urls option. Using thisone weird trick, we can set this to a gibberish regex that will never match, hence no link will be considered 'internal' and all links open in the browser.
+Packaging the App
+The final step is to install Nativefier, package the website into an app, and move it into the Applications directory:
+nativefier \
+  --name "GitHub Gmail" \
+  --icon cat.icns \
+  --inject custom.js \
+  --inject custom.css \
+  --internal-urls "xxxxxxxxx" \
+  https://inbox.google.com
+rm -rf /Applications/GitHub\ Gmail.app
+mv GitHub\ Gmail-darwin-x64/GitHub\ Gmail.app /Applications/
+open /Applications/GitHub\ Gmail.app
+That's all there is to it! To see what other interesting things you can do, check out the Nativefier API documentation.
+Bonus Round: Jake!
+It was awesome to have Finn the Human in my dock, but it felt weird without Jake the Dog. Fortunately I also have a personal Gmail account, so there's a spot for Jake:
+curl -o jake.png https://cldup.com/o50ct5wvlJ.png
+nicns --in jake.png --out jake.icns
+nativefier \
+  --name "Inbox" \
+  --icon jake.icns \
+  --internal-urls "xxxxxxxxx" \
+  https://inbox.google.com
+rm -rf /Applications/Inbox.app
+mv Inbox-darwin-x64/Inbox.app /Applications/
+open /Applications/Inbox.app
+
+use link to extract the most needed property to make my browserstack
+
+import property map : import from "https://zeke.sikelianos.com/ "
+   export to : https://browserstack.com 
+    update browserstack.com dependencies: true
